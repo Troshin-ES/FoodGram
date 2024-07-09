@@ -1,6 +1,5 @@
-from djoser.views import UserViewSet
+
 from rest_framework import serializers
-from rest_framework.decorators import action
 
 from api.serializers import UserSerializer, CustomUsers
 from recipe.models import Recipes
@@ -77,14 +76,15 @@ class SubscriptionsSerializer(CustomUserSerializer):
             'recipes',
             'recipes_count',
         ]
+        depth = 2
 
     @staticmethod
     def get_recipes(obj):
         recipes = Recipes.objects.filter(author=obj)
-        sub_recipe = SubscriptionsRecipSerializer(data=recipes, many=True)
-        sub_recipe.is_valid()
+        subscription_recipe = SubscriptionsRecipSerializer(data=recipes, many=True)
+        subscription_recipe.is_valid()
         result = []
-        for order_dict in sub_recipe.data:
+        for order_dict in subscription_recipe.data:
             result.append(dict(order_dict))
         return result
 
@@ -93,19 +93,22 @@ class SubscriptionsSerializer(CustomUserSerializer):
 
 
 def subscriptions(self, request):
-    queryset = Subscriptions.objects.filter(
-        follower=request.user
-    )
-    # res = []
-    # for subscription in subscriptions:
-    #     author = subscription.author
-    #     res.append(SubscriptionsSerializer(author, context={'request': request}).data)
-    # return res
-    # print(queryset)
+    queryset = CustomUsers.objects.filter(author__follower=request.user)
+    print(queryset)
     return SubscriptionsSerializer(
-        queryset, context={'request': request}, many=True
+        queryset,
+        context={'request': request},
+        many=True
     ).data
 
+
+    # res = []
+    # for subscription in queryset:
+    #     res.append(SubscriptionsSerializer(
+    #         subscription.author,
+    #         context={'request': request}).data
+    #                )
+    # return res
 
 def t():
     # subscriptions(None, request)
@@ -114,4 +117,4 @@ def t():
 # subscriptions = Subscriptions.objects.filter(follower=Request.user)
 
 from t2 import (SubscriptionsSerializer, SubscriptionsRecipSerializer,
-                subscriptions, t)
+                subscriptions, t, Subscriptions)

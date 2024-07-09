@@ -1,4 +1,5 @@
 from djoser.serializers import UserSerializer
+from rest_framework.response import Response
 from rest_framework import serializers
 
 from recipe.models import Recipes
@@ -67,10 +68,8 @@ class SubscriptionsSerializer(CustomUserSerializer):
         recipes = Recipes.objects.filter(author=obj)
         sub_recipe = SubscriptionsRecipSerializer(data=recipes, many=True)
         sub_recipe.is_valid()
-        result = []
-        for order_dict in sub_recipe.data:
-            result.append(dict(order_dict))
-        return result
+        return sub_recipe.data
 
-    def get_recipes_count(self, obj):
+    @staticmethod
+    def get_recipes_count(obj):
         return Recipes.objects.filter(author=obj).count()
