@@ -1,11 +1,12 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from recipe.models import Recipes
+from recipe.models import Recipes, FavoriteRecipes, ShoppingLists
 from user.models import CustomUsers, Subscriptions
 
 
 class CustomUserSerializer(UserSerializer):
+
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -72,3 +73,51 @@ class SubscriptionsSerializer(CustomUserSerializer):
     @staticmethod
     def get_recipes_count(obj):
         return Recipes.objects.filter(author=obj).count()
+
+
+class RecipeGET(serializers.ModelSerializer):
+
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_list = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Recipes
+        fields = [
+            'id',
+            'tags',
+            'author',
+            'ingredients',
+            'is_favorited',
+            'is_in_shopping_list',
+            'name',
+            'image',
+            'text',
+            'cooking_time'
+        ]
+
+    def get_is_favorited(self, obj):
+        user = self.context['request'].user
+        recipe = obj
+        if not user.is_authenticated:
+            return False
+        if FavoriteRecipes.objects.filter(
+                recipe=recipe,
+                user=user
+        ).exists():
+            return True
+        return False
+
+    def get_is_in_shopping_list(self, obj):
+        user = self.context['request'].user
+        recipe = obj
+        if not user.is_authenticated:
+            return False
+        if ShoppingLists.objects.filter(
+                recipe=recipe,
+                user=user
+        ).exists():
+            return True
+        return False
+
+    def create(self, validated_data):
+        print('create')

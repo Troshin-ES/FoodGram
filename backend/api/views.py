@@ -1,12 +1,13 @@
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from api.serializers import SubscriptionsSerializer, CustomUserSerializer
+from api.serializers import SubscriptionsSerializer, CustomUserSerializer, RecipeGET
+from recipe.models import Recipes
 from user.models import Subscriptions, CustomUsers
 
 
@@ -74,3 +75,10 @@ class CustomUserViewSet(UserViewSet):
                 {'error': f'Вы не подписаны на {author.username}'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipes.objects.all()
+    serializer_class = RecipeGET
+    permission_classes = [AllowAny]
+    # filter_backends = []
