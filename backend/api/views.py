@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
@@ -34,12 +35,42 @@ class CustomUserViewSet(UserViewSet):
         methods=['post', 'delete'],
         permission_classes=[IsAuthenticated]
     )
-    def subscribe(self, request, id=None):
-        print('self')
-        print(self)
-        print(dir(self))
-        print()
-        print('request')
-        print(request)
-        print(dir(request))
-        pass
+    def subscribe(self, request, id):
+        author = get_object_or_404(CustomUsers, pk=id)
+        if request.method == 'POST':
+            if author == request.user:
+                return Response(
+                    {'error': 'Нельзя подписаться на самого себя'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            obj, created = Subscriptions.objects.get_or_create(
+                author=author,
+                follower=request.user
+            )
+            if created:
+                serializer = SubscriptionsSerializer(
+                    author, context={'request': request}
+                )
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
+
+            return Response(
+                {'error': f'Вы уже подписаны на {author.username}'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if request.method == 'DELETE':
+            obj = Subscriptions.objects.filter(
+                author=author,
+                follower=request.user
+            )
+            if obj:
+                obj.delete()
+                return Response(
+                    {'message': f'Вы отписались от {author.username}'},
+                    status=status.HTTP_204_NO_CONTENT,
+                )
+            return Response(
+                {'error': f'Вы не подписаны на {author.username}'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
