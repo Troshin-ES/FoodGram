@@ -39,9 +39,13 @@ class Command(BaseCommand):
             data = json.load(json_file)
         self.cursor.execute(f"""DELETE FROM {table}""")
         for i in data:
+            print(
+                f"""INSERT INTO {table}{column_name}
+                VALUES({tuple(i.values())}),""",)
+
             self.cursor.execute(
                 f"""INSERT INTO {table}{column_name}
-                VALUES({'?,' * (len(column_name)-1) + '?'})""", [*i.values()]
+                VALUES({'?,' * (len(column_name)-1) + '?'})""", tuple(i.values())
             )
 
     def handle(self, *args, **options):
