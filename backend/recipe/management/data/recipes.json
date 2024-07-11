@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "tags_id": "1, 2, 3",
+    "author_id": "1",
+    "ingredients_id": "[1, 11, 111]",
+    "name": "пицца",
+    "image": "![](../../../media/пицца.jpg)",
+    "text": "Вкусная тестова пицца",
+    "cooking_time": "10"
+  },
+  {
+    "id": "2",
+    "tags_id": "[1,]",
+    "author_id": "1",
+    "ingredients_id": "[1, 11, 111]",
+    "name": "пицца",
+    "image": "![](../../../media/пицца.jpg)",
+    "text": "Вкусная тестова пицца",
+    "cooking_time": "10"
+  },
+  {
+    "id": "3",
+    "tags_id": "[2, 3]",
+    "author_id": "2",
+    "ingredients_id": "[2, 22, 222]",
+    "name": "Блины",
+    "image": "![](../../../media/пицца.jpg)",
+    "text": "Вкусные тестовые блины",
+    "cooking_time": "10"
+  }
+]
