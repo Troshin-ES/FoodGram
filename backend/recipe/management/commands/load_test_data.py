@@ -48,9 +48,9 @@ class Command(BaseCommand):
         for i in self.PARAMETERS:
             print(f'Добавления записей в {self.PARAMETERS[i]["table"]}')
             try:
-                self.cursor.execute(
-                    f"""DELETE FROM {self.PARAMETERS[i]['table']}"""
-                )
+                # self.cursor.execute(
+                #     f"""DELETE FROM {self.PARAMETERS[i]['table']}"""
+                # )
                 self.load(
                     self.PARAMETERS[i]['path_file'],
                     self.PARAMETERS[i]['table'],
@@ -60,7 +60,7 @@ class Command(BaseCommand):
                 print('Выполнено')
             except sqlite3.IntegrityError:
                 print(
-                    'Ошибка во время добавления в' 
+                    'Ошибка во время добавления в ' 
                     f'{self.PARAMETERS[i]["table"]}'
                 )
         self.con.close()
