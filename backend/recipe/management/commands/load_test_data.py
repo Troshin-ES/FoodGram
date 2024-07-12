@@ -7,6 +7,7 @@ from django.core.management import BaseCommand
 
 
 class Command(BaseCommand):
+
     PARAMETERS = {
         'users': {'path_file': 'recipe/management/data/users.json',
                   'table': 'user_customusers',
@@ -37,12 +38,7 @@ class Command(BaseCommand):
     def load(self, path_file, table, column_name):
         with open(path_file, 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
-        self.cursor.execute(f"""DELETE FROM {table}""")
         for i in data:
-            print(
-                f"""INSERT INTO {table}{column_name}
-                VALUES({tuple(i.values())}),""",)
-
             self.cursor.execute(
                 f"""INSERT INTO {table}{column_name}
                 VALUES({'?,' * (len(column_name)-1) + '?'})""", tuple(i.values())
@@ -52,14 +48,19 @@ class Command(BaseCommand):
         for i in self.PARAMETERS:
             print(f'Добавления записей в {self.PARAMETERS[i]["table"]}')
             try:
+                self.cursor.execute(
+                    f"""DELETE FROM {self.PARAMETERS[i]['table']}"""
+                )
                 self.load(
                     self.PARAMETERS[i]['path_file'],
                     self.PARAMETERS[i]['table'],
                     self.PARAMETERS[i]['column_name']
                 )
+                self.con.commit()
                 print('Выполнено')
             except sqlite3.IntegrityError:
                 print(
                     'Ошибка во время добавления в' 
                     f'{self.PARAMETERS[i]["table"]}'
                 )
+        self.con.close()
