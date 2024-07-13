@@ -101,15 +101,6 @@ def subscriptions(self, request):
         many=True
     ).data
 
-
-    # res = []
-    # for subscription in queryset:
-    #     res.append(SubscriptionsSerializer(
-    #         subscription.author,
-    #         context={'request': request}).data
-    #                )
-    # return res
-
 def t():
     # subscriptions(None, request)
     return subscriptions(None, request)
