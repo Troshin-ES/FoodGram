@@ -25,6 +25,9 @@ class Tags(models.Model):
 
 
 class Ingredients(models.Model):
+    name = models.CharField(max_length=100)
+    measurement_unit = models.CharField(max_length=5)
+
     class Meta:
         verbose_name = _('Ингредиент')
         verbose_name_plural = _('Ингредиенты')
