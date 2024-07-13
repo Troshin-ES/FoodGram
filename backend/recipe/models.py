@@ -10,6 +10,7 @@ class Tags(models.Model):
         max_length=100,
         verbose_name=_('Название')
     )
+    #поправить цвета
     color = models.CharField(
         max_length=7,
         default="#ffffff",
@@ -23,6 +24,9 @@ class Tags(models.Model):
         verbose_name = _('Тэг')
         verbose_name_plural = _('Тэги')
 
+    def __str__(self):
+        return f'{self.name}, slug: {self.slug}'
+
 
 class Ingredients(models.Model):
     name = models.CharField(max_length=100)
@@ -31,6 +35,9 @@ class Ingredients(models.Model):
     class Meta:
         verbose_name = _('Ингредиент')
         verbose_name_plural = _('Ингредиенты')
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class AmountIngredients(models.Model):
