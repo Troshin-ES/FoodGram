@@ -6,8 +6,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from api.serializers import SubscriptionsSerializer, CustomUserSerializer, RecipeGET
-from recipe.models import Recipes
+from api.serializers import SubscriptionsSerializer, CustomUserSerializer, RecipeGET, TagSerializer, \
+    IngredientSerializer
+from recipe.models import Recipes, Tags, Ingredients
 from user.models import Subscriptions, CustomUsers
 
 
@@ -82,3 +83,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeGET
     permission_classes = [AllowAny]
     # filter_backends = []
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tags.objects.all()
+    serializer_class = TagSerializer
+
+
+class IngredientViewSet(viewsets.ModelViewSet):
+    queryset = Ingredients.objects.all()
+    serializer_class = IngredientSerializer

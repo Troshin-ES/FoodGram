@@ -1,9 +1,7 @@
 [
   {
     "id": "1",
-    "tags_id": "3",
     "author_id": "1",
-    "ingredients_id": "1",
     "name": "пицца",
     "image": "![](../../../media/пицца.jpg)",
     "text": "Вкусная тестова пицца",
@@ -11,9 +9,7 @@
   },
   {
     "id": "2",
-    "tags_id": "1",
     "author_id": "1",
-    "ingredients_id": "111",
     "name": "пицца",
     "image": "![](../../../media/пицца.jpg)",
     "text": "Вкусная тестова картошка",
@@ -21,9 +17,7 @@
   },
   {
     "id": "3",
-    "tags_id": "1",
     "author_id": "2",
-    "ingredients_id": "222",
     "name": "Блины",
     "image": "![](../../../media/пицца.jpg)",
     "text": "Вкусные тестовые блины",
@@ -31,9 +25,7 @@
   },
   {
     "id": "4",
-    "tags_id": "2",
     "author_id": "2",
-    "ingredients_id": "300",
     "name": "Блины",
     "image": "![](../../../media/салат.jpg)",
     "text": "Вкусные тестовый салат",

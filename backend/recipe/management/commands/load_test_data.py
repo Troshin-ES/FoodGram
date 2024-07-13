@@ -5,6 +5,8 @@ import json
 from django.utils.translation import gettext as _
 from django.core.management import BaseCommand
 
+from user.models import CustomUsers
+
 
 class Command(BaseCommand):
 
@@ -25,13 +27,27 @@ class Command(BaseCommand):
             'path_file': 'recipe/management/data/recipes.json',
             'table': 'recipe_recipes',
             'column_name': (
-                'id', 'tags_id', 'author_id', 'ingredients_id',
+                'id', 'author_id',
                 'name', 'image', 'text', 'cooking_time'
+            )
+        },
+        'recipes_tags': {
+            'path_file': 'recipe/management/data/recipes_tags.json',
+            'table': 'recipe_recipes_tags',
+            'column_name': (
+                'id', 'recipes_id', 'tags_id'
+            )
+        },
+        'recipes_ingredients': {
+            'path_file': 'recipe/management/data/recipes_ingredients.json',
+            'table': 'recipe_recipes_ingredients',
+            'column_name': (
+                'id', 'recipes_id', 'ingredients_id'
             )
         }
     }
 
-    help = _('Загрузка пользователей в базу')
+    help = _('Загрузка тестовых данных в базу')
     con = sqlite3.connect('db.sqlite3')
     cursor = con.cursor()
 
@@ -46,11 +62,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for i in self.PARAMETERS:
-            print(f'Добавления записей в {self.PARAMETERS[i]["table"]}')
             try:
-                # self.cursor.execute(
-                #     f"""DELETE FROM {self.PARAMETERS[i]['table']}"""
-                # )
+                print(f'Таблица {self.PARAMETERS[i]["table"]} очищена')
+                self.cursor.execute(
+                    f"""DELETE FROM {self.PARAMETERS[i]['table']}"""
+                )
+                print(f'Добавления записей в {self.PARAMETERS[i]["table"]}')
                 self.load(
                     self.PARAMETERS[i]['path_file'],
                     self.PARAMETERS[i]['table'],
@@ -64,3 +81,23 @@ class Command(BaseCommand):
                     f'{self.PARAMETERS[i]["table"]}'
                 )
         self.con.close()
+
+        self.create_superuser()
+
+    @staticmethod
+    def create_superuser():
+        CustomUsers.objects.create_user(
+            id=1,
+            email='admin@m.ru',
+            username='admin',
+            first_name='first__name_admin',
+            last_name='las_name_admin',
+            password='admin',
+            is_superuser=1,
+            is_staff=1,
+            is_active=1,
+            date_joined=datetime.datetime.today()
+        )
+        print('Супер пользователь создан')
+        print('email: admin@m.ru')
+        print('password: admin')

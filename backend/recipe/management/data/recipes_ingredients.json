@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "recipes_id": "1",
+    "ingredients_id": "55"
+  },
+  {
+    "id": "2",
+    "recipes_id": "1",
+    "ingredients_id": "24"
+  },
+  {
+    "id": "3",
+    "recipes_id": "1",
+    "ingredients_id": "3"
+  },
+  {
+    "id": "4",
+    "recipes_id": "2",
+    "ingredients_id": "100"
+  },
+  {
+    "id": "5",
+    "recipes_id": "2",
+    "ingredients_id": "356"
+  },
+  {
+    "id": "6",
+    "recipes_id": "2",
+    "ingredients_id": "36"
+  },
+  {
+    "id": "7",
+    "recipes_id": "2",
+    "ingredients_id": "500"
+  }
+]

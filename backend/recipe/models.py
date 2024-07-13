@@ -33,10 +33,14 @@ class Ingredients(models.Model):
         verbose_name_plural = _('Ингредиенты')
 
 
+class AmountIngredients(models.Model):
+    amount = models.IntegerField
+
+
 class Recipes(models.Model):
-    tags = models.ForeignKey(
+    tags = models.ManyToManyField(
         Tags,
-        on_delete=models.CASCADE,
+        # on_delete=models.CASCADE,
         related_name='recipe',
         verbose_name=_('Тэги')
     )
@@ -46,9 +50,9 @@ class Recipes(models.Model):
         related_name='recipe',
         verbose_name=_('Автор')
     )
-    ingredients = models.ForeignKey(
+    ingredients = models.ManyToManyField(
         Ingredients,
-        on_delete=models.CASCADE,
+        # on_delete=models.CASCADE,
         related_name='recipe',
         verbose_name=_('Ингридиенты'),
     )

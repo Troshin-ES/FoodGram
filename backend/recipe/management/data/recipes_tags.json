@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "recipes_id": "1",
+    "tags_id": "1"
+  },
+  {
+    "id": "2",
+    "recipes_id": "1",
+    "tags_id": "2"
+  },
+  {
+    "id": "3",
+    "recipes_id": "1",
+    "tags_id": "3"
+  },
+  {
+    "id": "4",
+    "recipes_id": "2",
+    "tags_id": "1"
+  },
+  {
+    "id": "5",
+    "recipes_id": "2",
+    "tags_id": "3"
+  }
+]

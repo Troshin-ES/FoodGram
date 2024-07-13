@@ -1,7 +1,7 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from recipe.models import Recipes, FavoriteRecipes, ShoppingLists
+from recipe.models import Recipes, FavoriteRecipes, ShoppingLists, Tags, Ingredients
 from user.models import CustomUsers, Subscriptions
 
 
@@ -75,10 +75,34 @@ class SubscriptionsSerializer(CustomUserSerializer):
         return Recipes.objects.filter(author=obj).count()
 
 
+class TagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tags
+        fields = [
+            'id',
+            'name',
+            'color',
+            'slug'
+        ]
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ingredients
+        fields = [
+            'id',
+            'name',
+            'measurement_unit'
+        ]
+
+
 class RecipeGET(serializers.ModelSerializer):
 
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_list = serializers.SerializerMethodField()
+    tags = TagSerializer(many=True, required=False)
 
     class Meta:
         model = Recipes
