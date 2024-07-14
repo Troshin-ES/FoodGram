@@ -1,7 +1,9 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 
-from recipe.models import Recipes, FavoriteRecipes, ShoppingLists, Tags, Ingredients
+from recipe.models import (Recipes, FavoriteRecipes, ShoppingLists,
+                           Tags, Ingredients, AmountIngredient)
 from user.models import CustomUsers, Subscriptions
 
 
@@ -98,11 +100,30 @@ class IngredientSerializer(serializers.ModelSerializer):
         ]
 
 
+class AmountIngredientSerializer(serializers.ModelSerializer):
+    #
+    # id =
+    # name =
+    # measurement_unit =
+    class Meta:
+        model = AmountIngredient
+        fields = [
+            'id',
+            'recipe',
+            'ingredient',
+            'amount'
+        ]
+
+
 class RecipeGET(serializers.ModelSerializer):
 
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_list = serializers.SerializerMethodField()
-    tags = TagSerializer(many=True, required=False)
+    tags = TagSerializer(many=True)
+    author = CustomUserSerializer(required=True)
+    print("TYTA")
+    # ingredients = AmountIngredientSerializer(many=True, required=True)
+    ingredients = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipes
@@ -143,5 +164,29 @@ class RecipeGET(serializers.ModelSerializer):
             return True
         return False
 
+    def get_ingredients(self, obj):
+        # print('get_ingredients')
+        # print(obj.id)
+        # print(obj)
+        ingredient = AmountIngredient.objects.filter(ingredient__recipe=obj)
+        ingredient_aaa = AmountIngredient.objects.filter(recipe=obj)
+        recipe = AmountIngredient.objects.filter(recipe=obj)
+        print(Ingredients.objects.filter)
+        print('Ингредиенты')
+        print(ingredient)
+        print('ingredient_aaa')
+        print(ingredient_aaa)
+        print('recipe')
+        print(recipe)
+        # print(ingredient[0].name)
+        # serializer = IngredientSerializer(data=ingredient, many=True)
+        # print(serializer.is_valid())
+        # print()
+        # # print(ingredient[0].name)
+        # # print(ingredient[0].measurement_unit)
+        # print(IngredientSerializer(data=ingredient, many=True))
+        # print(IngredientSerializer(data=ingredient, many=True).is_valid())
+        # print(IngredientSerializer(data=ingredient).is_valid())
+        # print(IngredientSerializer(data=ingredient).data)
     def create(self, validated_data):
         print('create')

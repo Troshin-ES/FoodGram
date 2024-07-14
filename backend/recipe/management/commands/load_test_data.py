@@ -11,13 +11,15 @@ from user.models import CustomUsers
 class Command(BaseCommand):
 
     PARAMETERS = {
-        'users': {'path_file': 'recipe/management/data/users.json',
-                  'table': 'user_customusers',
-                  'column_name': (
-                      'id', 'email', 'username', 'first_name', 'last_name',
-                      'password', 'is_superuser', 'is_staff', 'is_active',
-                      'date_joined')
-                  },
+        'users': {
+            'path_file': 'recipe/management/data/users.json',
+            'table': 'user_customusers',
+            'column_name': (
+                'id', 'email', 'username', 'first_name', 'last_name',
+                'password', 'is_superuser', 'is_staff', 'is_active',
+                'date_joined'
+            )
+        },
         'tags': {
             'path_file': 'recipe/management/data/tags.json',
             'table': 'recipe_tags',
@@ -38,11 +40,11 @@ class Command(BaseCommand):
                 'id', 'recipes_id', 'tags_id'
             )
         },
-        'recipes_ingredients': {
-            'path_file': 'recipe/management/data/recipes_ingredients.json',
-            'table': 'recipe_recipes_ingredients',
+        'recipe_amountingredient': {
+            'path_file': 'recipe/management/data/recipe_amountingredient.json',
+            'table': 'recipe_amountingredient',
             'column_name': (
-                'id', 'recipes_id', 'ingredients_id'
+                'id', 'amount', 'recipe_id', 'ingredient_id'
             )
         }
     }

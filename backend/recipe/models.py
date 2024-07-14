@@ -17,7 +17,9 @@ class Tags(models.Model):
         verbose_name=_('Цвет')
     )
     slug = models.SlugField(
-        allow_unicode=True
+        allow_unicode=True,
+        max_length=200,
+        unique=True
     )
 
     class Meta:
@@ -29,8 +31,8 @@ class Tags(models.Model):
 
 
 class Ingredients(models.Model):
-    name = models.CharField(max_length=100)
-    measurement_unit = models.CharField(max_length=5)
+    name = models.CharField(max_length=200)
+    measurement_unit = models.CharField(max_length=200)
 
     class Meta:
         verbose_name = _('Ингредиент')
@@ -40,14 +42,9 @@ class Ingredients(models.Model):
         return f'{self.name}'
 
 
-class AmountIngredients(models.Model):
-    amount = models.IntegerField
-
-
 class Recipes(models.Model):
     tags = models.ManyToManyField(
         Tags,
-        # on_delete=models.CASCADE,
         related_name='recipe',
         verbose_name=_('Тэги')
     )
@@ -59,9 +56,9 @@ class Recipes(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredients,
-        # on_delete=models.CASCADE,
+        through="AmountIngredient",
         related_name='recipe',
-        verbose_name=_('Ингридиенты'),
+        verbose_name=_('Ингредиенты'),
     )
     name = models.CharField(
         max_length=200,
@@ -86,6 +83,25 @@ class Recipes(models.Model):
 
     def __str__(self):
         return f'Название рецепта: {self.name}, автор рецепта: {self.author}'
+
+
+class AmountIngredient(models.Model):
+    amount = models.IntegerField(
+        validators=[MinValueValidator(1)],
+        verbose_name=_('Количество')
+    )
+    ingredient = models.ForeignKey(
+        Ingredients,
+        on_delete=models.CASCADE,
+        related_name='amount',
+        verbose_name=_('Ингредиетн')
+    )
+    recipe = models.ForeignKey(
+        Recipes,
+        on_delete=models.CASCADE,
+        related_name='amount',
+        verbose_name=_('Рецепт')
+    )
 
 
 class FavoriteRecipes(models.Model):

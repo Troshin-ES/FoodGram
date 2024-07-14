@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1",
+    "amount": "100",
+    "recipes_id": "1",
+    "ingredients_id": "55"
+  },
+  {
+    "id": "2",
+    "amount": "20",
+    "recipes_id": "1",
+    "ingredients_id": "24"
+  },
+  {
+    "id": "3",
+    "amount": "30",
+    "recipes_id": "2",
+    "ingredients_id": "3"
+  },
+  {
+    "id": "4",
+    "amount": "123",
+    "recipes_id": "2",
+    "ingredients_id": "35"
+  },
+  {
+    "id": "5",
+    "amount": "56",
+    "recipes_id": "3",
+    "ingredients_id": "356"
+  },
+  {
+    "id": "6",
+    "amount": "2",
+    "recipes_id": "3",
+    "ingredients_id": "36"
+  },
+  {
+    "id": "7",
+    "amount": "73",
+    "recipes_id": "4",
+    "ingredients_id": "44"
+  },
+  {
+    "id": "8",
+    "amount": "345",
+    "recipes_id": "4",
+    "ingredients_id": "354"
+  },
+  {
+    "id": "9",
+    "amount": "123",
+    "recipes_id": "3",
+    "ingredients_id": "90"
+  },
+  {
+    "id": "10",
+    "amount": "453",
+    "recipes_id": "4",
+    "ingredients_id": "230"
+  },
+  {
+    "id": "11",
+    "amount": "45",
+    "recipes_id": "2",
+    "ingredients_id": "40"
+  },
+  {
+    "id": "12",
+    "amount": "453",
+    "recipes_id": "1",
+    "ingredients_id": "50"
+  }
+]
