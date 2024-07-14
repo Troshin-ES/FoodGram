@@ -78,11 +78,20 @@ class CustomUserViewSet(UserViewSet):
             )
 
 
-class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipes.objects.all()
-    serializer_class = RecipeGET
+class RecipeViewSet(viewsets.ViewSet):
+    #
+    # queryset = Recipes.objects.all()
+    # serializer_class = RecipeGET(queryset, context='')
     permission_classes = [AllowAny]
     # filter_backends = []
+
+    def list(self, request):
+        print(request)
+        queryset = Recipes.objects.all()
+        serializer = RecipeGET(
+            queryset, context={'request': request}, many=True
+        )
+        return Response(serializer.data)
 
 
 class TagViewSet(viewsets.ModelViewSet):

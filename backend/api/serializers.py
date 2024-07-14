@@ -113,19 +113,17 @@ class AmountIngredientSerializer(serializers.ModelSerializer):
             'amount'
         ]
 
-    def get_amount(self, obj):
-        print('obj')
-        print(obj)
-        print('AmountIngredient.objects.filter(ingredient=obj).values()')
-        print(AmountIngredient.objects.filter(ingredient=obj).values())
-        print(AmountIngredient.objects.filter(ingredient=obj)[0])
+    @staticmethod
+    def get_amount(obj):
+        return AmountIngredient.objects.filter(ingredient=obj)[0].amount
+
 
 class RecipeGET(serializers.ModelSerializer):
 
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_list = serializers.SerializerMethodField()
     tags = TagSerializer(many=True)
-    author = CustomUserSerializer(required=True)
+    author = CustomUserSerializer()
     ingredients = serializers.SerializerMethodField()
 
     class Meta:
