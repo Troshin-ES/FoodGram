@@ -101,19 +101,24 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class AmountIngredientSerializer(serializers.ModelSerializer):
-    #
-    # id =
-    # name =
-    # measurement_unit =
+
+    amount = serializers.SerializerMethodField()
+
     class Meta:
-        model = AmountIngredient
+        model = Ingredients
         fields = [
             'id',
-            'recipe',
-            'ingredient',
+            'name',
+            'measurement_unit',
             'amount'
         ]
 
+    def get_amount(self, obj):
+        print('obj')
+        print(obj)
+        print('AmountIngredient.objects.filter(ingredient=obj).values()')
+        print(AmountIngredient.objects.filter(ingredient=obj).values())
+        print(AmountIngredient.objects.filter(ingredient=obj)[0])
 
 class RecipeGET(serializers.ModelSerializer):
 
@@ -121,8 +126,6 @@ class RecipeGET(serializers.ModelSerializer):
     is_in_shopping_list = serializers.SerializerMethodField()
     tags = TagSerializer(many=True)
     author = CustomUserSerializer(required=True)
-    print("TYTA")
-    # ingredients = AmountIngredientSerializer(many=True, required=True)
     ingredients = serializers.SerializerMethodField()
 
     class Meta:
@@ -165,28 +168,10 @@ class RecipeGET(serializers.ModelSerializer):
         return False
 
     def get_ingredients(self, obj):
-        # print('get_ingredients')
-        # print(obj.id)
-        # print(obj)
-        ingredient = AmountIngredient.objects.filter(ingredient__recipe=obj)
-        ingredient_aaa = AmountIngredient.objects.filter(recipe=obj)
-        recipe = AmountIngredient.objects.filter(recipe=obj)
-        print(Ingredients.objects.filter)
-        print('Ингредиенты')
-        print(ingredient)
-        print('ingredient_aaa')
-        print(ingredient_aaa)
-        print('recipe')
-        print(recipe)
-        # print(ingredient[0].name)
-        # serializer = IngredientSerializer(data=ingredient, many=True)
-        # print(serializer.is_valid())
-        # print()
-        # # print(ingredient[0].name)
-        # # print(ingredient[0].measurement_unit)
-        # print(IngredientSerializer(data=ingredient, many=True))
-        # print(IngredientSerializer(data=ingredient, many=True).is_valid())
-        # print(IngredientSerializer(data=ingredient).is_valid())
-        # print(IngredientSerializer(data=ingredient).data)
+        ingredients = Ingredients.objects.filter(amount__recipe=obj)
+        serializer = AmountIngredientSerializer(data=ingredients, many=True)
+        serializer.is_valid()
+        return serializer.data
+
     def create(self, validated_data):
         print('create')
