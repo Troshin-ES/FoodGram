@@ -2,10 +2,15 @@ from django_filters import rest_framework as filters
 from recipe.models import Recipes
 
 
+class SlugFilter(filters.CharFilter):
+    pass
+
+
 class RecipeFilter(filters.FilterSet):
 
-    is_favorited = filters.BooleanFilter(field_name='is_favorited')
-    is_in_shopping_list = filters.BooleanFilter(field_name='is_in_shopping_list')
+    is_favorited = filters.NumberFilter(field_name='is_favorited')
+    is_in_shopping_list = filters.NumberFilter(field_name='is_in_shopping_list')
+    tags = SlugFilter(field_name='tags__slug', lookup_expr='icontains')
 
     class Meta:
         model = Recipes

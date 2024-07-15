@@ -138,7 +138,7 @@ class AmountIngredientSerializer(serializers.ModelSerializer):
         return get_object_or_404(AmountIngredient, ingredient=obj).amount
 
 
-class RecipeSerializer(serializers.ModelSerializer):
+class RecipeListSerializer(serializers.ModelSerializer):
 
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
@@ -186,11 +186,31 @@ class RecipeSerializer(serializers.ModelSerializer):
             return True
         return False
 
-    def get_ingredients(self, obj):
+    @staticmethod
+    def get_ingredients(obj):
         ingredients = Ingredients.objects.filter(amount__recipe=obj)
         serializer = AmountIngredientSerializer(data=ingredients, many=True)
         serializer.is_valid()
         return serializer.data
 
+
+class RecipCreateSerializer(serializers.ModelSerializer):
+
+    image = Base64ImageField()
+    ingredients = serializers.SerializerMethodField()
+    class Meta:
+        model = Recipes
+        fields = [
+            'ingredients',
+            'tags',
+            'image',
+            'name',
+            'text',
+            'cooking_time'
+        ]
+
+    def get_ingredients(self):
+        pass
+
     def create(self, validated_data):
-        print('create')
+        print(**validated_data)

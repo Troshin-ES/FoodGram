@@ -9,11 +9,12 @@ from rest_framework.response import Response
 
 from api.filters import RecipeFilter
 from api.serializers import (SubscriptionsSerializer, CustomUserSerializer,
-                             RecipeSerializer, TagSerializer,
-                             IngredientSerializer)
+                             TagSerializer,
+                             IngredientSerializer, RecipeListSerializer)
 from recipe.models import Recipes, Tags, Ingredients
 from user.models import Subscriptions, CustomUsers
 from django_filters import rest_framework as filters
+
 
 class CustomUserViewSet(UserViewSet):
     @action(
@@ -81,40 +82,52 @@ class CustomUserViewSet(UserViewSet):
             )
 
 
-# class RecipeViewSet(viewsets.ViewSet):
-#     permission_classes = [AllowAny]
-#     # filter_backends = []
-#
-#     @staticmethod
-#     def list(request):
-#         queryset = Recipes.objects.all()
-#         serializer = RecipeSerializer(
-#             queryset, context={'request': request}, many=True
-#         )
-#         return Response(serializer.data)
-
-
 class RecipeViewSet(viewsets.ModelViewSet):
+    queryset = Recipes.objects.all()
     permission_classes = [AllowAny]
-    filter_backends = [filters.DjangoFilterBackend]
-    # search_fields = ['author__id', 'tags']
-    # filterset_fields = ['is_favorited', 'is_in_shopping_list', 'id__author']
+    filter_backends = [DjangoFilterBackend]
     filterset_fields = RecipeFilter
-
-    def get_queryset(self):
-        if self.request.method == 'GET':
-            return Recipes.objects.all()
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
-            return RecipeSerializer(
-                self.get_queryset(),
-                context={'request': self.request},
-                many=True
-            )
+            return RecipeListSerializer
 
     def list(self, request, *args, **kwargs):
-        return Response(self.get_serializer_class().data)
+        serializer = self.get_serializer(
+            self.queryset, context={'request': request}, many=True
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(request)
+        return Response(serializer.data)
+
+
+#
+# class RecipeViewSet(viewsets.ModelViewSet):
+#     permission_classes = [AllowAny]
+#     filter_backends = [DjangoFilterBackend]
+#     # search_fields = ['author__id', 'tags']
+#     # filterset_fields = ['is_favorited', 'is_in_shopping_list', 'id__author']
+#     filterset_fields = RecipeFilter
+#
+#     def get_queryset(self):
+#         print(self.request.query_params['author'])
+#         if self.request.method == 'GET':
+#             return Recipes.objects.all()
+#
+#
+#
+#     def get_serializer_class(self):
+#         if self.request.method == 'GET':
+#             return RecipeSerializer(
+#                 self.get_queryset(),
+#                 context={'request': self.request},
+#                 many=True
+#             )
+#
+#     def list(self, request, *args, **kwargs):
+#         return Response(self.get_serializer_class().data)
 
 
 class TagViewSet(viewsets.ModelViewSet):
