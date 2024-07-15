@@ -124,4 +124,31 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ]
 
 
-Recipes.objects.create()
+    def get_ingredients(self):
+        print(self.data)
+        AmountIngredient.objects.create(
+            recipe='',
+            ingredient='',
+            amount=''
+        )
+
+    def create(self, validated_data):
+        print(**validated_data)
+
+request = {
+  "ingredients": [
+    {
+      "id": 1123,
+      "amount": 10
+    }
+  ],
+  "tags": [
+    1,
+    2
+  ],
+  "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+  "name": "string",
+  "text": "string",
+  "cooking_time": 1
+}
+r = Recipes.objects.create()

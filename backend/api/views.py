@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from api.filters import RecipeFilter
 from api.serializers import (SubscriptionsSerializer, CustomUserSerializer,
                              TagSerializer,
-                             IngredientSerializer, RecipeListSerializer)
+                             IngredientSerializer, RecipeListSerializer, RecipeCreateSerializer)
 from recipe.models import Recipes, Tags, Ingredients
 from user.models import Subscriptions, CustomUsers
 from django_filters import rest_framework as filters
@@ -91,6 +91,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeListSerializer
+        if self.request.method == 'POST':
+            return RecipeCreateSerializer
 
     def list(self, request, *args, **kwargs):
         serializer = self.get_serializer(
@@ -99,7 +101,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(request)
+        print('Create')
+        serializer = self.get_serializer(self.request)
         return Response(serializer.data)
 
 

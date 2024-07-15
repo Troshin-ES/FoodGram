@@ -194,10 +194,12 @@ class RecipeListSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
-class RecipCreateSerializer(serializers.ModelSerializer):
-
-    image = Base64ImageField()
+class RecipeCreateSerializer(serializers.ModelSerializer):
+    print('RecipeCreateSerializer')
     ingredients = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
+    image = Base64ImageField()
+
     class Meta:
         model = Recipes
         fields = [
@@ -209,8 +211,15 @@ class RecipCreateSerializer(serializers.ModelSerializer):
             'cooking_time'
         ]
 
-    def get_ingredients(self):
+    def get_ingredients(self, obj):
+        print('get_ingredients')
+        print(self)
+        print(obj)
         pass
 
+    def get_tags(self, obj):
+        print('get_tags')
+
     def create(self, validated_data):
+        print('RecipeCreateSerializer def create')
         print(**validated_data)
