@@ -7,12 +7,13 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from api.filters import RecipeFilter
 from api.serializers import (SubscriptionsSerializer, CustomUserSerializer,
                              RecipeSerializer, TagSerializer,
                              IngredientSerializer)
 from recipe.models import Recipes, Tags, Ingredients
 from user.models import Subscriptions, CustomUsers
-
+from django_filters import rest_framework as filters
 
 class CustomUserViewSet(UserViewSet):
     @action(
@@ -95,9 +96,10 @@ class CustomUserViewSet(UserViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [filters.DjangoFilterBackend]
     # search_fields = ['author__id', 'tags']
-    filterset_fields = ['is_favorited', 'is_in_shopping_list', 'author']
+    # filterset_fields = ['is_favorited', 'is_in_shopping_list', 'id__author']
+    filterset_fields = RecipeFilter
 
     def get_queryset(self):
         if self.request.method == 'GET':
