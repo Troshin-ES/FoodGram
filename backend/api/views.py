@@ -85,8 +85,8 @@ class CustomUserViewSet(UserViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     permission_classes = [AllowAny]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = RecipeFilter
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = RecipeFilter
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -94,31 +94,40 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method == 'POST':
             return RecipeCreateSerializer
 
-    def list(self, request, *args, **kwargs):
-        serializer = self.get_serializer(
-            self.queryset,
-            context={'request': request},
-            many=True
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(
-            data=request.data,
-            context={'author': request.user}
-        )
-        serializer.is_valid()
-        serializer.save()
-        print(serializer.save())
-        return Response(serializer.data)
-
-    def destroy(self, request, *args, **kwargs):
-        recipe = get_object_or_404(Recipes, pk=kwargs['pk'])
-        recipe.delete()
-        return Response(
-            f'Рецепт: {recipe.name} удален!',
-            status=status.HTTP_204_NO_CONTENT
-        )
+    # def list(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(
+    #         self.queryset,
+    #         context={'request': request},
+    #         many=True
+    #     )
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    #
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(
+    #         data=request.data,
+    #         context={'author': request.user}
+    #     )
+    #     serializer.is_valid()
+    #     recipe = serializer.save()
+    #     res = RecipeListSerializer(
+    #         data=recipe, context={'request': request}
+    #     )
+    #     print(res.initial_data)
+    #     res.is_valid()
+    #     print(res.is_valid())
+    #     return Response(res.data)
+    #     # res = serializer.save()
+    #     # print(serializer.save())
+    #     # print(res.id)
+    #     # return self.list(request, id=res.id)
+    #
+    # def destroy(self, request, *args, **kwargs):
+    #     recipe = get_object_or_404(Recipes, pk=kwargs['pk'])
+    #     recipe.delete()
+    #     return Response(
+    #         f'Рецепт: {recipe.name} удален!',
+    #         status=status.HTTP_204_NO_CONTENT
+    #     )
 
 
 class TagViewSet(viewsets.ModelViewSet):

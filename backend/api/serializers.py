@@ -207,7 +207,11 @@ class AmountIngredientCreateSerializer(serializers.Serializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = AmountIngredientCreateSerializer(many=True)
-    tags = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    tags = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Tags.objects.all(),
+        read_only=False
+    )
     image = Base64ImageField()
 
     class Meta:
@@ -223,10 +227,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients')
+        tags_id = [i.id for i in validated_data.pop('tags')]
         recipe = Recipes.objects.create(
-                author=self.context['author'],
+                author=self.context['request'].user,
                 **validated_data
         )
+        recipe.tags.add(*tags_id)
         for ingredient_data in ingredients_data:
             AmountIngredient.objects.create(
                 recipe=recipe,
@@ -240,10 +246,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         ingredients_data = validated_data.pop('ingredients')
         for ingredient_data in ingredients_data:
-
-        instance.ingredients = ingredients_data('ingredients', instance.ingredients)
-
-        instance.tags = validated_data.get('tags', instance.tags)
+            AmountIngredient.objects.create(
+                recipe=instance,
+                ingredient=get_object_or_404(
+                    Ingredients, pk=ingredient_data['id']
+                ),
+                amount=ingredient_data['amount']
+            )
+        # tags_id = [i.id for i in validated_data.pop('tags')]
+        instance.tags.add(*[i.id for i in validated_data.pop('tags')])
         instance.image = validated_data.get('image', instance.image)
         instance.text = validated_data.get('text', instance.text)
         instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
