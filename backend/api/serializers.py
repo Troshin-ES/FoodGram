@@ -133,9 +133,13 @@ class AmountIngredientSerializer(serializers.ModelSerializer):
             'amount'
         ]
 
-    @staticmethod
-    def get_amount(obj):
-        return get_object_or_404(AmountIngredient, ingredient=obj).amount
+    # @staticmethod
+    def get_amount(self, obj):
+        return get_object_or_404(
+            AmountIngredient,
+            recipe=self.context['recipe'],
+            ingredient=obj
+        ).amount
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
@@ -189,15 +193,21 @@ class RecipeListSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_ingredients(obj):
         ingredients = Ingredients.objects.filter(amount__recipe=obj)
-        serializer = AmountIngredientSerializer(data=ingredients, many=True)
+        serializer = AmountIngredientSerializer(
+            data=ingredients, context={'recipe': obj}, many=True
+        )
         serializer.is_valid()
         return serializer.data
 
 
+class AmountIngredientCreateSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+
 class RecipeCreateSerializer(serializers.ModelSerializer):
-    print('RecipeCreateSerializer')
-    ingredients = serializers.SerializerMethodField()
-    tags = serializers.SerializerMethodField()
+    ingredients = AmountIngredientCreateSerializer(many=True)
+    tags = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     image = Base64ImageField()
 
     class Meta:
@@ -211,15 +221,31 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'cooking_time'
         ]
 
-    def get_ingredients(self, obj):
-        print('get_ingredients')
-        print(self)
-        print(obj)
-        pass
-
-    def get_tags(self, obj):
-        print('get_tags')
-
     def create(self, validated_data):
-        print('RecipeCreateSerializer def create')
-        print(**validated_data)
+        ingredients_data = validated_data.pop('ingredients')
+        recipe = Recipes.objects.create(
+                author=self.context['author'],
+                **validated_data
+        )
+        for ingredient_data in ingredients_data:
+            AmountIngredient.objects.create(
+                recipe=recipe,
+                ingredient=get_object_or_404(
+                    Ingredients, pk=ingredient_data['id']
+                ),
+                amount=ingredient_data['amount']
+            )
+        return recipe
+
+    def update(self, instance, validated_data):
+        ingredients_data = validated_data.pop('ingredients')
+        for ingredient_data in ingredients_data:
+
+        instance.ingredients = ingredients_data('ingredients', instance.ingredients)
+
+        instance.tags = validated_data.get('tags', instance.tags)
+        instance.image = validated_data.get('image', instance.image)
+        instance.text = validated_data.get('text', instance.text)
+        instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
+        instance.save()
+        return instance

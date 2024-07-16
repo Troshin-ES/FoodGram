@@ -109,7 +109,6 @@ DJOSER = {
         'user': 'api.serializers.CustomUserSerializer',
         'current_user': 'api.serializers.CustomUserSerializer',
     },
-    # 'HIDE_USERS': False
 }
 
 # Password validation

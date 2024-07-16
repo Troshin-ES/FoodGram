@@ -108,10 +108,20 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
+class AmountIngredientCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AmountIngredient
+        fields = [
+            'ingredient',
+            'amount'
+        ]
+
+
 class RecipeCreateSerializer(serializers.ModelSerializer):
 
     image = Base64ImageField()
-    ingredients = serializers.SerializerMethodField()
+    ingredients = AmountIngredientCreateSerializer
+
     class Meta:
         model = Recipes
         fields = [
@@ -124,16 +134,17 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ]
 
 
-    def get_ingredients(self):
-        print(self.data)
-        AmountIngredient.objects.create(
-            recipe='',
-            ingredient='',
-            amount=''
-        )
+    # def get_ingredients(self):
+    #     print(self.data)
+    #     AmountIngredient.objects.create(
+    #         recipe='',
+    #         ingredient='',
+    #         amount=''
+    #     )
 
     def create(self, validated_data):
         print(**validated_data)
+
 
 request = {
   "ingredients": [
