@@ -209,7 +209,7 @@ class AmountIngredientCreateSerializer(serializers.Serializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = AmountIngredientCreateSerializer(
         many=True,
-        validators=[validate_list]
+        required=True
     )
     image = Base64ImageField()
 
