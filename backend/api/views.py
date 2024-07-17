@@ -4,7 +4,8 @@ from djoser.views import UserViewSet
 from rest_framework import status, viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, \
+    IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from api.filters import RecipeFilter
@@ -84,7 +85,7 @@ class CustomUserViewSet(UserViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     # filter_backends = [DjangoFilterBackend]
     # filterset_fields = RecipeFilter
 

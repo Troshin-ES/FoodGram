@@ -1,6 +1,7 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, validate_slug
 from django.db import models
 from django.utils.translation import gettext as _
+
 from user.models import CustomUsers
 
 
@@ -19,7 +20,8 @@ class Tags(models.Model):
     slug = models.SlugField(
         allow_unicode=True,
         max_length=200,
-        unique=True
+        unique=True,
+        validators=[validate_slug]
     )
 
     class Meta:
@@ -58,7 +60,7 @@ class Recipes(models.Model):
         Ingredients,
         through="AmountIngredient",
         related_name='recipe',
-        verbose_name=_('Ингредиенты'),
+        verbose_name=_('Ингредиенты')
     )
     name = models.CharField(
         max_length=200,

@@ -5,6 +5,7 @@ from djoser.serializers import UserSerializer
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
+from api.validations import validate_list
 from recipe.models import (Recipes, FavoriteRecipes, ShoppingLists,
                            Tags, Ingredients, AmountIngredient)
 from user.models import CustomUsers, Subscriptions
@@ -202,15 +203,13 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
 class AmountIngredientCreateSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(min_value=1)
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
-    ingredients = AmountIngredientCreateSerializer(many=True)
-    tags = serializers.PrimaryKeyRelatedField(
+    ingredients = AmountIngredientCreateSerializer(
         many=True,
-        queryset=Tags.objects.all(),
-        read_only=False
+        validators=[validate_list]
     )
     image = Base64ImageField()
 
@@ -225,14 +224,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'cooking_time'
         ]
 
-    def create(self, validated_data):
-        ingredients_data = validated_data.pop('ingredients')
-        tags_id = [i.id for i in validated_data.pop('tags')]
-        recipe = Recipes.objects.create(
-                author=self.context['request'].user,
-                **validated_data
-        )
-        recipe.tags.add(*tags_id)
+    @staticmethod
+    def processing_of_ingredient(recipe, ingredients_data):
         for ingredient_data in ingredients_data:
             AmountIngredient.objects.create(
                 recipe=recipe,
@@ -241,22 +234,32 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 ),
                 amount=ingredient_data['amount']
             )
+
+    def create(self, validated_data):
+        ingredients_data = validated_data.pop('ingredients')
+        tags_data = validated_data.pop('tags')
+        recipe = Recipes.objects.create(
+                author=self.context['request'].user,
+                **validated_data
+        )
+        recipe.tags.add(*tags_data)
+        self.processing_of_ingredient(recipe, ingredients_data)
         return recipe
 
     def update(self, instance, validated_data):
         ingredients_data = validated_data.pop('ingredients')
-        for ingredient_data in ingredients_data:
-            AmountIngredient.objects.create(
-                recipe=instance,
-                ingredient=get_object_or_404(
-                    Ingredients, pk=ingredient_data['id']
-                ),
-                amount=ingredient_data['amount']
-            )
-        # tags_id = [i.id for i in validated_data.pop('tags')]
-        instance.tags.add(*[i.id for i in validated_data.pop('tags')])
+        self.processing_of_ingredient(instance, ingredients_data)
+        instance.tags.add(*validated_data.pop('tags'))
         instance.image = validated_data.get('image', instance.image)
         instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
+        instance.cooking_time = validated_data.get(
+            'cooking_time', instance.cooking_time
+        )
         instance.save()
         return instance
+
+    def to_representation(self, instance):
+        return RecipeListSerializer(
+            instance,
+            context={'request': self.context['request']}
+        ).data

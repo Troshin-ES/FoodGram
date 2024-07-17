@@ -1,3 +1,5 @@
+from rest_framework.exceptions import ValidationError
+
 request = {
   "ingredients": [
     {
@@ -22,11 +24,22 @@ request = {
   "text": "text_recipes_TEXT",
   "cooking_time": 1
 }
-from api.serializers import RecipeCreateSerializer
+# from api.serializers import RecipeCreateSerializer
+#
+# t = RecipeCreateSerializer(data=request)
+# t.is_valid()
+# print(t.is_valid())
+# print(t.errors)
+# print(t.save())
+# from test import t
 
-t = RecipeCreateSerializer(data=request)
-print(t.initial_data)
-t.is_valid()
-print(t.is_valid())
-print(t.errors)
-from test import t
+
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+def validators_list(value):
+    if value:
+        raise ValidationError(
+          _("Полу Ингредиенты н может быть пустым")
+        )
+
+validators_list([])
