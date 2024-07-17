@@ -4,7 +4,7 @@ import json
 from django.utils.translation import gettext as _
 from django.core.management import BaseCommand
 
-from recipe.models import Ingredients
+from recipe.models import Ingredient
 
 
 class Command(BaseCommand):
@@ -23,7 +23,7 @@ class Command(BaseCommand):
         for i in data:
             n += 1
             cursor.execute("""
-            INSERT INTO recipe_ingredients(name, measurement_unit)
+            INSERT INTO recipe_ingredient(name, measurement_unit)
             VALUES(?,?)""", tuple(i.values())
                            )
         con.commit()

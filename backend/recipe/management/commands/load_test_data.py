@@ -5,7 +5,7 @@ import json
 from django.utils.translation import gettext as _
 from django.core.management import BaseCommand
 
-from user.models import CustomUsers
+from user.models import CustomUser
 
 
 class Command(BaseCommand):
@@ -13,7 +13,7 @@ class Command(BaseCommand):
     PARAMETERS = {
         'users': {
             'path_file': 'recipe/management/data/users.json',
-            'table': 'user_customusers',
+            'table': 'user_customuser',
             'column_name': (
                 'id', 'email', 'username', 'first_name', 'last_name',
                 'password', 'is_superuser', 'is_staff', 'is_active',
@@ -22,12 +22,12 @@ class Command(BaseCommand):
         },
         'tags': {
             'path_file': 'recipe/management/data/tags.json',
-            'table': 'recipe_tags',
+            'table': 'recipe_tag',
             'column_name': ('id', 'name', 'color', 'slug')
         },
         'recipes': {
             'path_file': 'recipe/management/data/recipes.json',
-            'table': 'recipe_recipes',
+            'table': 'recipe_recipe',
             'column_name': (
                 'id', 'author_id',
                 'name', 'image', 'text', 'cooking_time'
@@ -35,9 +35,9 @@ class Command(BaseCommand):
         },
         'recipes_tags': {
             'path_file': 'recipe/management/data/recipes_tags.json',
-            'table': 'recipe_recipes_tags',
+            'table': 'recipe_recipe_tags',
             'column_name': (
-                'id', 'recipes_id', 'tags_id'
+                'id', 'recipe_id', 'tag_id'
             )
         },
         'recipe_amountingredient': {
@@ -88,7 +88,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def create_superuser():
-        CustomUsers.objects.create_user(
+        CustomUser.objects.create_user(
             id=1,
             email='admin@m.ru',
             username='admin',

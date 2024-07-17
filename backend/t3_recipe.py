@@ -4,15 +4,15 @@ from django.core.files.base import ContentFile
 from rest_framework import serializers, viewsets
 
 from api.serializers import TagSerializer
-from recipe.models import FavoriteRecipes, ShoppingLists, Recipes, \
-    AmountIngredient, Ingredients
-from user.models import CustomUsers
+from recipe.models import FavoriteRecipe, ShoppingList, Recipe, \
+    AmountIngredient, Ingredient
+from user.models import CustomUser
 
 
 class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Ingredients
+        model = Ingredient
         fields = [
             'id',
             'name',
@@ -45,7 +45,7 @@ class RecipeGET(serializers.ModelSerializer):
     ingredients = serializers.SerializerMethodField()
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = [
             'id',
             'tags',
@@ -64,7 +64,7 @@ class RecipeGET(serializers.ModelSerializer):
         recipe = obj
         if not user.is_authenticated:
             return False
-        if FavoriteRecipes.objects.filter(
+        if FavoriteRecipe.objects.filter(
                 recipe=recipe,
                 user=user
         ).exists():
@@ -76,7 +76,7 @@ class RecipeGET(serializers.ModelSerializer):
         recipe = obj
         if not user.is_authenticated:
             return False
-        if ShoppingLists.objects.filter(
+        if ShoppingList.objects.filter(
                 recipe=recipe,
                 user=user
         ).exists():
@@ -123,7 +123,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = AmountIngredientCreateSerializer
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = [
             'ingredients',
             'tags',
@@ -162,4 +162,4 @@ request = {
   "text": "string",
   "cooking_time": 1
 }
-r = Recipes.objects.create()
+r = Recipe.objects.create()

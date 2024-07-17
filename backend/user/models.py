@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class CustomUsers(AbstractUser):
+class CustomUser(AbstractUser):
     email = models.EmailField(
         unique=True,
         max_length=254,
@@ -21,16 +21,16 @@ class CustomUsers(AbstractUser):
         return self.username
 
 
-class Subscriptions(models.Model):
+class Subscription(models.Model):
     "Подписка на автора рецепта"
     author = models.ForeignKey(
-        CustomUsers,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='author',
         verbose_name=_('Автор рецепта'),
     )
     follower = models.ForeignKey(
-        CustomUsers,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='follower',
         verbose_name=_('Подписчик'),

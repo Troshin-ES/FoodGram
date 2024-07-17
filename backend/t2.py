@@ -1,9 +1,9 @@
 
 from rest_framework import serializers
 
-from api.serializers import UserSerializer, CustomUsers
-from recipe.models import Recipes
-from user.models import Subscriptions
+from api.serializers import UserSerializer, CustomUser
+from recipe.models import Recipe
+from user.models import Subscription
 
 
 class CustomUserSerializer(UserSerializer):
@@ -11,7 +11,7 @@ class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
-        model = CustomUsers
+        model = CustomUser
         fields = [
             'email',
             'id',
@@ -26,7 +26,7 @@ class CustomUserSerializer(UserSerializer):
         author = obj
         if not user.is_authenticated:
             return False
-        if Subscriptions.objects.filter(
+        if Subscription.objects.filter(
             author=author,
             follower=user
         ).exists():
@@ -35,10 +35,10 @@ class CustomUserSerializer(UserSerializer):
 
 
 class request:
-    user = CustomUsers.objects.get(pk=1)
+    user = CustomUser.objects.get(pk=1)
 
 
-author = CustomUsers(
+author = CustomUser(
     email='email@m.ru',
     id=2,
     username='username_author',
@@ -50,7 +50,7 @@ author = CustomUsers(
 class SubscriptionsRecipSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = [
             'id',
             'name',
@@ -65,7 +65,7 @@ class SubscriptionsSerializer(CustomUserSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = CustomUsers
+        model = CustomUser
         fields = [
             'email',
             'id',
@@ -80,7 +80,7 @@ class SubscriptionsSerializer(CustomUserSerializer):
 
     @staticmethod
     def get_recipes(obj):
-        recipes = Recipes.objects.filter(author=obj)
+        recipes = Recipe.objects.filter(author=obj)
         subscription_recipe = SubscriptionsRecipSerializer(data=recipes, many=True)
         subscription_recipe.is_valid()
         result = []
@@ -89,11 +89,11 @@ class SubscriptionsSerializer(CustomUserSerializer):
         return result
 
     def get_recipes_count(self, obj):
-        return Recipes.objects.filter(author=obj).count()
+        return Recipe.objects.filter(author=obj).count()
 
 
 def subscriptions(self, request):
-    queryset = CustomUsers.objects.filter(author__follower=request.user)
+    queryset = CustomUser.objects.filter(author__follower=request.user)
     print(queryset)
     return SubscriptionsSerializer(
         queryset,
@@ -108,4 +108,4 @@ def t():
 # subscriptions = Subscriptions.objects.filter(follower=Request.user)
 
 from t2 import (SubscriptionsSerializer, SubscriptionsRecipSerializer,
-                subscriptions, t, Subscriptions)
+                subscriptions, t, Subscription)

@@ -2,10 +2,10 @@ from django.core.validators import MinValueValidator, validate_slug
 from django.db import models
 from django.utils.translation import gettext as _
 
-from user.models import CustomUsers
+from user.models import CustomUser
 
 
-class Tags(models.Model):
+class Tag(models.Model):
 
     name = models.CharField(
         max_length=100,
@@ -32,7 +32,7 @@ class Tags(models.Model):
         return f'{self.name}, slug: {self.slug}'
 
 
-class Ingredients(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(max_length=200)
     measurement_unit = models.CharField(max_length=200)
 
@@ -44,23 +44,24 @@ class Ingredients(models.Model):
         return f'{self.name}'
 
 
-class Recipes(models.Model):
+class Recipe(models.Model):
     tags = models.ManyToManyField(
-        Tags,
+        Tag,
         related_name='recipe',
         verbose_name=_('Тэги')
     )
     author = models.ForeignKey(
-        CustomUsers,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='recipe',
         verbose_name=_('Автор')
     )
     ingredients = models.ManyToManyField(
-        Ingredients,
+        Ingredient,
         through="AmountIngredient",
+        through_fields=('recipe', 'ingredient'),
         related_name='recipe',
-        verbose_name=_('Ингредиенты')
+        verbose_name=_('Ингредиенты'),
     )
     name = models.CharField(
         max_length=200,
@@ -96,28 +97,28 @@ class AmountIngredient(models.Model):
         verbose_name=_('Количество')
     )
     ingredient = models.ForeignKey(
-        Ingredients,
+        Ingredient,
         on_delete=models.CASCADE,
         related_name='amount',
         verbose_name=_('Ингредиетн')
     )
     recipe = models.ForeignKey(
-        Recipes,
+        Recipe,
         on_delete=models.CASCADE,
         related_name='amount',
         verbose_name=_('Рецепт')
     )
 
 
-class FavoriteRecipes(models.Model):
+class FavoriteRecipe(models.Model):
     user = models.ForeignKey(
-        CustomUsers,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='favorite',
         verbose_name=_('Пользователь')
     )
     recipe = models.ForeignKey(
-        Recipes,
+        Recipe,
         on_delete=models.CASCADE,
         related_name='favorite',
         verbose_name=_('Рецепт')
@@ -128,15 +129,15 @@ class FavoriteRecipes(models.Model):
         verbose_name_plural = _('Избранные рецепты')
 
 
-class ShoppingLists(models.Model):
+class ShoppingList(models.Model):
     user = models.ForeignKey(
-        CustomUsers,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='shop_list',
         verbose_name=_('Пользователь')
     )
     recipe = models.ForeignKey(
-        Recipes,
+        Recipe,
         on_delete=models.CASCADE,
         related_name='shop_list',
         verbose_name=_('Рецепт')

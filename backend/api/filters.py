@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from recipe.models import Recipes
+from recipe.models import Recipe
 
 
 class SlugFilter(filters.CharFilter):
@@ -13,5 +13,5 @@ class RecipeFilter(filters.FilterSet):
     tags = SlugFilter(field_name='tags__slug', lookup_expr='icontains')
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = ['tags', 'author']

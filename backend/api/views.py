@@ -12,8 +12,8 @@ from api.filters import RecipeFilter
 from api.serializers import (SubscriptionsSerializer, CustomUserSerializer,
                              TagSerializer,
                              IngredientSerializer, RecipeListSerializer, RecipeCreateSerializer)
-from recipe.models import Recipes, Tags, Ingredients
-from user.models import Subscriptions, CustomUsers
+from recipe.models import Recipe, Tag, Ingredient
+from user.models import Subscription, CustomUser
 from django_filters import rest_framework as filters
 
 
@@ -24,7 +24,7 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated]
     )
     def subscriptions(self, request):
-        queryset = CustomUsers.objects.filter(author__follower=request.user)
+        queryset = CustomUser.objects.filter(author__follower=request.user)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = SubscriptionsSerializer(
@@ -43,14 +43,14 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, id):
-        author = get_object_or_404(CustomUsers, pk=id)
+        author = get_object_or_404(CustomUser, pk=id)
         if request.method == 'POST':
             if author == request.user:
                 return Response(
                     {'error': 'Нельзя подписаться на самого себя'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            obj, created = Subscriptions.objects.get_or_create(
+            obj, created = Subscription.objects.get_or_create(
                 author=author,
                 follower=request.user
             )
@@ -67,7 +67,7 @@ class CustomUserViewSet(UserViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if request.method == 'DELETE':
-            obj = Subscriptions.objects.filter(
+            obj = Subscription.objects.filter(
                 author=author,
                 follower=request.user
             )
@@ -84,7 +84,7 @@ class CustomUserViewSet(UserViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipes.objects.all()
+    queryset = Recipe.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
     # filter_backends = [DjangoFilterBackend]
     # filterset_fields = RecipeFilter
@@ -95,48 +95,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method in ('POST', 'PATCH'):
             return RecipeCreateSerializer
 
-    # def list(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(
-    #         self.queryset,
-    #         context={'request': request},
-    #         many=True
-    #     )
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
-    #
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(
-    #         data=request.data,
-    #         context={'author': request.user}
-    #     )
-    #     serializer.is_valid()
-    #     recipe = serializer.save()
-    #     res = RecipeListSerializer(
-    #         data=recipe, context={'request': request}
-    #     )
-    #     print(res.initial_data)
-    #     res.is_valid()
-    #     print(res.is_valid())
-    #     return Response(res.data)
-    #     # res = serializer.save()
-    #     # print(serializer.save())
-    #     # print(res.id)
-    #     # return self.list(request, id=res.id)
-    #
-    # def destroy(self, request, *args, **kwargs):
-    #     recipe = get_object_or_404(Recipes, pk=kwargs['pk'])
-    #     recipe.delete()
-    #     return Response(
-    #         f'Рецепт: {recipe.name} удален!',
-    #         status=status.HTTP_204_NO_CONTENT
-    #     )
 
 
 class TagViewSet(viewsets.ModelViewSet):
-    queryset = Tags.objects.all()
+    queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
-    queryset = Ingredients.objects.all()
+    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
 

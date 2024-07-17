@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUsers, Subscriptions
+from .models import CustomUser, Subscription
 # Register your models here.
-admin.site.register(CustomUsers)
-admin.site.register(Subscriptions)
+admin.site.register(CustomUser)
+admin.site.register(Subscription)

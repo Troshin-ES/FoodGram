@@ -1,13 +1,13 @@
 from django.contrib import admin
 
 # Register your models here.
-from recipe.models import (Recipes, Tags, Ingredients,
-                           FavoriteRecipes, ShoppingLists,
+from recipe.models import (Recipe, Tag, Ingredient,
+                           FavoriteRecipe, ShoppingList,
                            AmountIngredient)
 
-admin.site.register(Recipes)
-admin.site.register(Tags)
-admin.site.register(Ingredients)
-admin.site.register(FavoriteRecipes)
-admin.site.register(ShoppingLists)
+admin.site.register(Recipe)
+admin.site.register(Tag)
+admin.site.register(Ingredient)
+admin.site.register(FavoriteRecipe)
+admin.site.register(ShoppingList)
 admin.site.register(AmountIngredient)
