@@ -1,22 +1,19 @@
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from rest_framework import status, viewsets, filters
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated, \
-    IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-
-from api.filters import RecipeFilter
 from api.serializers import (SubscriptionsSerializer,
                              TagSerializer,
                              IngredientSerializer, RecipeListSerializer,
                              RecipeCreateSerializer)
-from recipe.models import Recipe, Tag, Ingredient, FavoriteRecipe, \
-    ShoppingList, AmountIngredient
+from recipe.models import (Recipe, Tag, Ingredient, FavoriteRecipe,
+                           ShoppingList, AmountIngredient)
 from user.models import Subscription, CustomUser
-from django_filters import rest_framework as filters
 
 
 class CustomUserViewSet(UserViewSet):
@@ -104,7 +101,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         shop_list_data = ShoppingList.objects.filter(user=request.user)
         with open(
-                f'Shopping_cart_{request.user}.txt', 'w', encoding='utf-8'
+                f'media/shop_lists/Shopping_cart_{request.user}.txt',
+                'w',
+                encoding='utf-8'
         ) as file:
             for obj in shop_list_data:
                 objects = AmountIngredient.objects.filter(recipe=obj.recipe)
@@ -114,7 +113,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                f'{obj.amount} '
                                f'{obj.ingredient.measurement_unit}\n')
                 file.write(f'{"-"*50}\n')
-            return Response(content_type='txt')
+        return FileResponse(open(
+            f'media/shop_lists/Shopping_cart_{request.user}.txt',
+            'r',
+            encoding='utf-8'))
 
     @action(
         detail=True,
