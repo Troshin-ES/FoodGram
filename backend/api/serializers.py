@@ -3,9 +3,10 @@ import base64
 from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
-from api.validations import validate_list
+from django.utils.translation import gettext_lazy as _
 from recipe.models import (Recipe, FavoriteRecipe, ShoppingList,
                            Tag, Ingredient, AmountIngredient)
 from user.models import CustomUser, Subscription
@@ -29,7 +30,6 @@ class Base64ImageField(serializers.ImageField):
 
 
 class CustomUserSerializer(UserSerializer):
-
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -223,6 +223,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time'
         ]
+
+    @staticmethod
+    def validate_ingredients(value):
+        if value:
+            return value
+        raise ValidationError(
+            _("Поле Ингредиенты не может быть пустым")
+        )
 
     @staticmethod
     def processing_of_ingredient(recipe, ingredients_data):
