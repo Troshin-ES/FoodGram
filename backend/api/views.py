@@ -12,7 +12,6 @@ from api.serializers import (SubscriptionsSerializer,
                              TagSerializer,
                              IngredientSerializer, RecipeListSerializer,
                              RecipeCreateSerializer)
-from api.view_managment import method_post_and_delete
 from recipe.models import (Recipe, Tag, Ingredient, FavoriteRecipe,
                            ShoppingCart, AmountIngredient)
 from user.models import Subscription, CustomUser
@@ -32,7 +31,6 @@ class CustomUserViewSet(UserViewSet):
                 page, context={'request': request}, many=True
             )
             return self.get_paginated_response(serializer.data)
-
         serializer = SubscriptionsSerializer(
             queryset, context={'request': request}, many=True
         )
@@ -47,10 +45,7 @@ class CustomUserViewSet(UserViewSet):
         author = get_object_or_404(CustomUser, pk=id)
         if request.method == 'POST':
             if author == request.user:
-                return Response(
-                    {'error': 'Нельзя подписаться на самого себя'},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             obj, created = Subscription.objects.get_or_create(
                 author=author,
                 follower=request.user
@@ -62,10 +57,7 @@ class CustomUserViewSet(UserViewSet):
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
                 )
-            return Response(
-                {'error': f'Вы уже подписаны на {author.username}'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         if request.method == 'DELETE':
             obj = Subscription.objects.filter(
                 author=author,
@@ -73,14 +65,8 @@ class CustomUserViewSet(UserViewSet):
             )
             if obj:
                 obj.delete()
-                return Response(
-                    {'message': f'Вы отписались от {author.username}'},
-                    status=status.HTTP_204_NO_CONTENT,
-                )
-            return Response(
-                {'error': f'Вы не подписаны на {author.username}'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -129,9 +115,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def favorite(self, request, pk):
-        return method_post_and_delete(
-            self.queryset, request, pk, FavoriteRecipe
-        )
+        """Добавление рецепта в избранное"""
+        return self.method_post_and_delete(request, pk, FavoriteRecipe)
 
     @action(
         detail=True,
@@ -139,8 +124,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated]
     )
     def shopping_cart(self, request, pk):
-        return method_post_and_delete(self.queryset, request, pk, ShoppingCart)
+        """Добавление в список покупок"""
+        return self.method_post_and_delete(request, pk, ShoppingCart)
 
+    def method_post_and_delete(self, request, pk, model):
+        """Метод добавления и удаления в список покупок или избранное,
+        с проверкой дублирования и наличия"""
+        recipe = get_object_or_404(self.queryset, pk=pk)
+        if request.method == 'POST':
+            obj, create = model.objects.get_or_create(
+                user=request.user,
+                recipe=recipe
+            )
+            if create:
+                return Response(status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if request.method == 'DELETE':
+            obj = model.objects.filter(user=request.user, recipe=recipe)
+            if obj:
+                obj.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
