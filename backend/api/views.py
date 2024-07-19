@@ -1,18 +1,19 @@
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
+from django_filters import rest_framework as filters
+from api.filters import RecipeFilter, IngredientFilter
 from api.serializers import (SubscriptionsSerializer,
                              TagSerializer,
                              IngredientSerializer, RecipeListSerializer,
                              RecipeCreateSerializer)
 from recipe.models import (Recipe, Tag, Ingredient, FavoriteRecipe,
-                           ShoppingList, AmountIngredient)
+                           ShoppingCart, AmountIngredient)
 from user.models import Subscription, CustomUser
 
 
@@ -84,8 +85,8 @@ class CustomUserViewSet(UserViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_fields = RecipeFilter
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -99,9 +100,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def download_shopping_cart(self, request):
-        shop_list_data = ShoppingList.objects.filter(user=request.user)
+        shop_list_data = ShoppingCart.objects.filter(user=request.user)
         with open(
-                f'media/shop_lists/Shopping_cart_{request.user}.txt',
+                f'media/shop_lists/Shopping_cart.txt',
                 'w',
                 encoding='utf-8'
         ) as file:
@@ -114,9 +115,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                f'{obj.ingredient.measurement_unit}\n')
                 file.write(f'{"-"*50}\n')
         return FileResponse(open(
-            f'media/shop_lists/Shopping_cart_{request.user}.txt',
+            f'media/shop_lists/Shopping_cart.txt',
             'r',
-            encoding='utf-8'))
+            encoding='utf-8').read(),
+                            as_attachment=True,
+                            filename='Список покупок.txt',
+                            )
 
     @action(
         detail=True,
@@ -162,7 +166,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk):
         recipe = get_object_or_404(Recipe, pk=pk)
         if self.request.method == 'POST':
-            obj, create = ShoppingList.objects.get_or_create(
+            obj, create = ShoppingCart.objects.get_or_create(
                 user=request.user,
                 recipe=recipe
             )
@@ -176,7 +180,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         if self.request.method == 'DELETE':
-            obj = ShoppingList.objects.filter(
+            obj = ShoppingCart.objects.filter(
                 user=self.request.user, recipe=recipe
             )
             if obj:
@@ -199,4 +203,6 @@ class TagViewSet(viewsets.ModelViewSet):
 class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = IngredientFilter
 

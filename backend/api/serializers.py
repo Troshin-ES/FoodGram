@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
 from django.utils.translation import gettext_lazy as _
-from recipe.models import (Recipe, FavoriteRecipe, ShoppingList,
+from recipe.models import (Recipe, FavoriteRecipe, ShoppingCart,
                            Tag, Ingredient, AmountIngredient)
 from user.models import CustomUser, Subscription
 
@@ -148,7 +148,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = CustomUserSerializer()
     is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_list = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
     ingredients = serializers.SerializerMethodField()
 
@@ -160,7 +160,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
             'author',
             'ingredients',
             'is_favorited',
-            'is_in_shopping_list',
+            'is_in_shopping_cart',
             'name',
             'image',
             'text',
@@ -179,12 +179,12 @@ class RecipeListSerializer(serializers.ModelSerializer):
             return True
         return False
 
-    def get_is_in_shopping_list(self, obj):
+    def get_is_in_shopping_cart(self, obj):
         user = self.context['request'].user
         recipe = obj
         if not user.is_authenticated:
             return False
-        if ShoppingList.objects.filter(
+        if ShoppingCart.objects.filter(
                 recipe=recipe,
                 user=user
         ).exists():
