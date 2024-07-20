@@ -1,10 +1,12 @@
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+                                        IsAuthenticatedOrReadOnly,
+                                        AllowAny)
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from api.filters import RecipeFilter, IngredientFilter
@@ -146,7 +148,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class TagViewSet(viewsets.ModelViewSet):
+
+class TagViewSet(mixins.ListModelMixin,
+                 GenericAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 

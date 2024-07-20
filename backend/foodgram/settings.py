@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e*2@d1#u3zfb=o7jg%^vsggk5^m2+85v^my)nb)t$vqp=pk7-o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost:8000']
 
 AUTH_USER_MODEL = 'user.CustomUser'
 # Application definition
@@ -54,8 +54,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication'
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100,
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10,
 }
 
 
@@ -102,13 +103,15 @@ DATABASES = {
 
 DJOSER = {
     'PERMISSIONS': {
-        'user': ['rest_framework.permissions.AllowAny']
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'user': ['rest_framework.permissions.IsAuthenticated'],
     },
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
         'user': 'api.serializers.CustomUserSerializer',
         'current_user': 'api.serializers.CustomUserSerializer',
     },
+    'HIDE_USERS': False
 }
 
 # Password validation
