@@ -149,10 +149,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class TagViewSet(mixins.ListModelMixin,
-                 GenericAPIView):
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [AllowAny]
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
