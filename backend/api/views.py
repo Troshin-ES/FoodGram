@@ -1,15 +1,15 @@
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import status, viewsets, mixins
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly,
                                         AllowAny)
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from api.filters import RecipeFilter, IngredientFilter
+from api.paginations import CustomPagination
+from api.permissions import IsAuthorOrReadOnly
 from api.serializers import (SubscriptionsSerializer,
                              TagSerializer,
                              IngredientSerializer, RecipeListSerializer,
@@ -20,6 +20,7 @@ from user.models import Subscription, CustomUser
 
 
 class CustomUserViewSet(UserViewSet):
+    pagination_class = CustomPagination
     @action(
         detail=False,
         methods=['GET'],
@@ -73,7 +74,8 @@ class CustomUserViewSet(UserViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly]
+    pagination_class = CustomPagination
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = RecipeFilter
 
