@@ -1,10 +1,10 @@
-from django.http import FileResponse
+from django.db.models import Count, Sum
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import (IsAuthenticated,
-                                        AllowAny)
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from api.filters import RecipeFilter, IngredientFilter
@@ -91,27 +91,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def download_shopping_cart(self, request):
-        shop_list_data = ShoppingCart.objects.filter(user=request.user)
-        with open(
-                f'media/shop_lists/Shopping_cart.txt',
-                'w',
-                encoding='utf-8'
-        ) as file:
-            for obj in shop_list_data:
-                objects = AmountIngredient.objects.filter(recipe=obj.recipe)
-                file.write(f'-=Рецепт: {obj.recipe} =-\n')
-                for obj in objects:
-                    file.write(f'{obj.ingredient.name}: '
-                               f'{obj.amount} '
-                               f'{obj.ingredient.measurement_unit}\n')
-                file.write(f'{"-"*50}\n')
-        return FileResponse(open(
-            f'media/shop_lists/Shopping_cart.txt',
-            'r',
-            encoding='utf-8').read(),
-                            as_attachment=True,
-                            filename='Список покупок.txt',
-                            )
+        queryset = AmountIngredient.objects.filter(
+            recipe__shop_cart__user=request.user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(sum=Sum('amount'))
+        result = ''
+        for i in queryset:
+            result += (f'{i["ingredient__name"]}: '
+                       f'{i["sum"]} '
+                       f'{i["ingredient__measurement_unit"]}\n')
+        return HttpResponse(result, content_type='text/palin')
 
     @action(
         detail=True,
