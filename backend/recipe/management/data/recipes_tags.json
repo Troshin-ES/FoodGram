@@ -1,27 +1,32 @@
 [
   {
-    "id": "1",
-    "recipes_id": "1",
+    "id": "101",
+    "recipes_id": "101",
     "tags_id": "1"
   },
   {
-    "id": "2",
-    "recipes_id": "1",
+    "id": "102",
+    "recipes_id": "101",
     "tags_id": "2"
   },
   {
-    "id": "3",
-    "recipes_id": "1",
+    "id": "103",
+    "recipes_id": "101",
     "tags_id": "3"
   },
   {
-    "id": "4",
-    "recipes_id": "2",
+    "id": "104",
+    "recipes_id": "102",
     "tags_id": "1"
   },
   {
-    "id": "5",
-    "recipes_id": "2",
+    "id": "105",
+    "recipes_id": "102",
+    "tags_id": "3"
+  },
+  {
+    "id": "106",
+    "recipes_id": "100",
     "tags_id": "3"
   }
 ]

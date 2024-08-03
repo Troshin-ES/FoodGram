@@ -1,35 +1,38 @@
 [
   {
     "id": "2",
-    "email": "vasa@m.ru",
-    "username": "VasaPupec",
-    "first_name": "Вася",
-    "last_name": "Пупуин",
-    "password": "ПАРОЛИЩЕ123",
+    "email": "Viktor@m.ru",
+    "username": "Viktor",
+    "first_name": "Виктор",
+    "last_name": "Баринов",
+    "password": "Баринов123",
     "is_superuser": "0",
     "is_staff": "0",
-    "is_active": "0"
+    "is_active": "0",
+    "date_joined": "2024-07-11 12:34:11.849291"
   },
   {
     "id": "3",
-    "email": "pety@m.ru",
-    "username": "Petr_1",
-    "first_name": "Петр",
-    "last_name": "Первый",
-    "password": "ПАРОЛИЩЕ123",
+    "email": "arseni@m.ru",
+    "username": "Senja",
+    "first_name": "Арсений",
+    "last_name": "Чубайс",
+    "password": "senja123",
     "is_superuser": "0",
     "is_staff": "0",
-    "is_active": "0"
+    "is_active": "0",
+    "date_joined": "2024-07-11 12:34:11.849291"
   },
   {
     "id": "4",
-    "email": "Aleksndr@m.ru",
-    "username": "Aleks",
-    "first_name": "Леха",
-    "last_name": "Лютый",
-    "password": "ПАРОЛИЩЕ123",
+    "email": "leva@m.ru",
+    "username": "Lev",
+    "first_name": "Лев",
+    "last_name": "Семенович",
+    "password": "lev123",
     "is_superuser": "0",
     "is_staff": "0",
-    "is_active": "0"
+    "is_active": "0",
+    "date_joined": "2024-07-11 12:34:11.849291"
   }
 ]

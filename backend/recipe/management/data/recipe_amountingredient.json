@@ -1,74 +1,86 @@
 [
   {
-    "id": "1",
+    "id": "101",
     "amount": "100",
-    "recipes_id": "1",
-    "ingredients_id": "55"
+    "recipes_id": "104",
+    "ingredients_id": "396"
   },
   {
-    "id": "2",
+    "id": "101",
     "amount": "20",
-    "recipes_id": "1",
-    "ingredients_id": "24"
+    "recipes_id": "104",
+    "ingredients_id": "1477"
   },
   {
-    "id": "3",
+    "id": "103",
     "amount": "30",
-    "recipes_id": "2",
-    "ingredients_id": "3"
+    "recipes_id": "104",
+    "ingredients_id": "886"
   },
   {
-    "id": "4",
+    "id": "104",
     "amount": "123",
-    "recipes_id": "2",
-    "ingredients_id": "35"
+    "recipes_id": "104",
+    "ingredients_id": "855"
   },
   {
-    "id": "5",
-    "amount": "56",
-    "recipes_id": "3",
-    "ingredients_id": "356"
+    "id": "105",
+    "amount": "560",
+    "recipes_id": "101",
+    "ingredients_id": "278"
   },
   {
-    "id": "6",
-    "amount": "2",
-    "recipes_id": "3",
-    "ingredients_id": "36"
+    "id": "106",
+    "amount": "50",
+    "recipes_id": "101",
+    "ingredients_id": "1423"
   },
   {
-    "id": "7",
-    "amount": "73",
-    "recipes_id": "4",
-    "ingredients_id": "44"
+    "id": "107",
+    "amount": "5",
+    "recipes_id": "101",
+    "ingredients_id": "2057"
   },
   {
-    "id": "8",
+    "id": "108",
     "amount": "345",
-    "recipes_id": "4",
-    "ingredients_id": "354"
+    "recipes_id": "100",
+    "ingredients_id": "727"
   },
   {
-    "id": "9",
-    "amount": "123",
-    "recipes_id": "3",
-    "ingredients_id": "90"
+    "id": "109",
+    "amount": "120",
+    "recipes_id": "100",
+    "ingredients_id": "822"
   },
   {
-    "id": "10",
-    "amount": "453",
-    "recipes_id": "4",
-    "ingredients_id": "230"
-  },
-  {
-    "id": "11",
+    "id": "110",
     "amount": "45",
-    "recipes_id": "2",
-    "ingredients_id": "40"
+    "recipes_id": "100",
+    "ingredients_id": "879"
   },
   {
-    "id": "12",
-    "amount": "453",
-    "recipes_id": "1",
-    "ingredients_id": "50"
+    "id": "111",
+    "amount": "500",
+    "recipes_id": "102",
+    "ingredients_id": "1493"
+  },
+  {
+    "id": "112",
+    "amount": "50",
+    "recipes_id": "102",
+    "ingredients_id": "2057"
+  },
+  {
+    "id": "113",
+    "amount": "5",
+    "recipes_id": "102",
+    "ingredients_id": "1202"
+  },
+  {
+    "id": "114",
+    "amount": "50",
+    "recipes_id": "102",
+    "ingredients_id": "19"
   }
 ]

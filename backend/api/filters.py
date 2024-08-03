@@ -1,5 +1,6 @@
+import django_filters
 from django_filters import rest_framework as filters
-from recipe.models import Recipe, Ingredient
+from recipe.models import Recipe, Ingredient, Tag
 
 
 class IngredientFilter(filters.FilterSet):
@@ -16,7 +17,10 @@ class RecipeFilter(filters.FilterSet):
     is_in_shopping_cart = filters.NumberFilter(
         method='shopping_cart_filter'
     )
-    tags = filters.CharFilter(field_name='tags__slug')
+    tags = django_filters.filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
+        field_name='tags__slug',
+        to_field_name='slug')
     author = filters.NumberFilter(field_name='author')
 
     class Meta:
