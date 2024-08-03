@@ -11,7 +11,6 @@ class Tag(models.Model):
         max_length=100,
         verbose_name=_('Название')
     )
-    #поправить цвета
     color = models.CharField(
         max_length=7,
         default="#ffffff",
@@ -112,6 +111,13 @@ class AmountIngredient(models.Model):
         verbose_name=_('Рецепт')
     )
 
+    class Meta:
+        verbose_name_plural = _('Колличество ингредиентов')
+        ordering = ['id']
+
+    def __str__(self):
+        return f'{self.ingredient}'
+
 
 class FavoriteRecipe(models.Model):
     user = models.ForeignKey(
@@ -132,6 +138,9 @@ class FavoriteRecipe(models.Model):
         verbose_name_plural = _('Избранные рецепты')
         ordering = ['id']
 
+    def __str__(self):
+        return f'Рецепт: {self.recipe}, пользователь {self.user}'
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
@@ -151,3 +160,6 @@ class ShoppingCart(models.Model):
         verbose_name = _('Список покупок')
         verbose_name_plural = _('Списки покупок')
         ordering = ['id']
+
+    def __str__(self):
+        return f'Рецепт: {self.recipe}, пользователь {self.user}'

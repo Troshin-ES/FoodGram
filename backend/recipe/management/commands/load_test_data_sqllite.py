@@ -1,11 +1,9 @@
 import datetime
-import os
+import sqlite3
 import json
 
-import psycopg2
 from django.utils.translation import gettext as _
 from django.core.management import BaseCommand
-from psycopg2 import sql
 
 from user.models import CustomUser
 
@@ -52,24 +50,16 @@ class Command(BaseCommand):
     }
 
     help = _('Загрузка тестовых данных в базу')
-    conn = psycopg2.connect(
-        dbname=os.getenv('POSTGRES_DB'),
-        user=os.getenv('POSTGRES_USER'),
-        password=os.getenv('POSTGRES_PASSWORD'),
-        host=os.getenv('DB_HOST')
-    )
-    cursor = conn.cursor()
+    con = sqlite3.connect('db.sqlite3')
+    cursor = con.cursor()
 
     def load(self, path_file, table, column_name):
         with open(path_file, 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
         for i in data:
             self.cursor.execute(
-                sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
-                    sql.Identifier(table),
-                    sql.SQL(', ').join(map(sql.Identifier, column_name)),
-                    sql.SQL(', ').join(sql.Placeholder() * len(column_name))
-                ), tuple(i.values())
+                f"""INSERT INTO {table}{column_name}
+                VALUES({'?,' * (len(column_name)-1) + '?'})""", tuple(i.values())
             )
 
     def handle(self, *args, **options):
@@ -85,14 +75,14 @@ class Command(BaseCommand):
                     self.PARAMETERS[i]['table'],
                     self.PARAMETERS[i]['column_name']
                 )
-                self.conn.commit()
+                self.con.commit()
                 print('Выполнено')
-            except psycopg2.IntegrityError:
+            except sqlite3.IntegrityError:
                 print(
-                    'Ошибка во время добавления в '
+                    'Ошибка во время добавления в ' 
                     f'{self.PARAMETERS[i]["table"]}'
                 )
-        self.conn.close()
+        self.con.close()
 
         self.create_superuser()
 

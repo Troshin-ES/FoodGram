@@ -1,6 +1,4 @@
-import os
-
-import psycopg2
+import sqlite3
 import json
 
 from django.utils.translation import gettext as _
@@ -11,13 +9,8 @@ class Command(BaseCommand):
     help = _('Загрузка ингредиентов в базу')
 
     def handle(self, *args, **options):
-        conn = psycopg2.connect(
-            dbname=os.getenv('POSTGRES_DB'),
-            user=os.getenv('POSTGRES_USER'),
-            password=os.getenv('POSTGRES_PASSWORD'),
-            host=os.getenv('DB_HOST')
-        )
-        cursor = conn.cursor()
+        con = sqlite3.connect('db.sqlite3')
+        cursor = con.cursor()
 
         with open(
                 'recipe/management/data/ingredients.json', 'r',
@@ -29,8 +22,8 @@ class Command(BaseCommand):
             n += 1
             cursor.execute("""
             INSERT INTO recipe_ingredient(name, measurement_unit)
-            VALUES(%s,%s)""", tuple(i.values())
+            VALUES(?,?)""", tuple(i.values())
                            )
-        conn.commit()
-        conn.close()
+        con.commit()
+        con.close()
         print(f'Загружено {n} ингредиентов.')

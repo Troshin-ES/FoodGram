@@ -1,5 +1,5 @@
-from django.db.models import Count, Sum
-from django.http import FileResponse, HttpResponse
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
@@ -13,7 +13,8 @@ from api.permissions import IsAuthorOrReadOnly
 from api.serializers import (SubscriptionsSerializer,
                              TagSerializer,
                              IngredientSerializer, RecipeListSerializer,
-                             RecipeCreateSerializer)
+                             RecipeCreateSerializer,
+                             FavoriteAndShopCartSerializer)
 from recipe.models import (Recipe, Tag, Ingredient, FavoriteRecipe,
                            ShoppingCart, AmountIngredient)
 from user.models import Subscription, CustomUser
@@ -27,6 +28,7 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated]
     )
     def subscriptions(self, request):
+        """Список авторов на которых подписан пользователь"""
         queryset = CustomUser.objects.filter(author__follower=request.user)
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -45,6 +47,7 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, id):
+        """Подписка на автора рецепта"""
         author = get_object_or_404(CustomUser, pk=id)
         if request.method == 'POST':
             if author == request.user:
@@ -91,18 +94,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def download_shopping_cart(self, request):
+        """Скачать лист покупок"""
         queryset = AmountIngredient.objects.filter(
             recipe__shop_cart__user=request.user
         ).values(
             'ingredient__name',
             'ingredient__measurement_unit'
         ).annotate(sum=Sum('amount'))
-        result = ''
+        shopping_list = ''
         for i in queryset:
-            result += (f'{i["ingredient__name"]}: '
-                       f'{i["sum"]} '
-                       f'{i["ingredient__measurement_unit"]}\n')
-        return HttpResponse(result, content_type='text/palin')
+            shopping_list += (f'{i["ingredient__name"]}: '
+                              f'{i["sum"]} '
+                              f'{i["ingredient__measurement_unit"]}\n')
+        return HttpResponse(shopping_list, content_type='text/plain')
 
     @action(
         detail=True,
@@ -132,7 +136,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 recipe=recipe
             )
             if create:
-                return Response(status=status.HTTP_201_CREATED)
+                serializer = FavoriteAndShopCartSerializer(recipe)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(status=status.HTTP_400_BAD_REQUEST)
         if request.method == 'DELETE':
             obj = model.objects.filter(user=request.user, recipe=recipe)
