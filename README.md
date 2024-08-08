@@ -126,4 +126,3 @@ docker-compose exec backend python manage.py createsuperuser
 ### Автор:  
 _Трошин Евгений_<br>
 **email**: _troshin-es@mail.ru_<br>
-**telegram** __ 
