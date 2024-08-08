@@ -46,7 +46,7 @@ class Command(BaseCommand):
             'path_file': 'recipe/management/data/recipe_amountingredient.json',
             'table': 'recipe_amountingredient',
             'column_name': (
-                'id', 'amount', 'recipe_id', 'ingredient_id'
+                'id', 'amount', 'ingredient_id', 'recipe_id'
             )
         }
     }

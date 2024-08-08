@@ -19,7 +19,7 @@
 
 ## Запуск проекта через Docker
 
-Установите Docker, используя инструкции с официального сайта:
+Установите и запустите Docker, используя инструкции с официального сайта:
 - для [Windows и MacOS](https://www.docker.com/products/docker-desktop)
 - для [Linux](https://docs.docker.com/engine/install/ubuntu/). Отдельно потребуется установть [Docker Compose](https://docs.docker.com/compose/install/)
 
@@ -28,13 +28,24 @@
 ```bash
 git clone https://github.com/Troshin-ES/FoodGram.git
 ```
-- в Docker cоздаем образ :
-```bash
-docker build -t foodgram .
-```
 
-Выполните команду:
+- Создать файл .env в папке проекта:
+```.env
+DB_NAME=postgres # имя базы данных
+POSTGRES_USER=postgres # логин для подключения к базе данных
+POSTGRES_PASSWORD=postgres # пароль для подключения к БД
+
+DB_HOST=db # название сервиса
+DB_PORT=5432 # порт для подключения к БД
+
+DEBUG=False # отключите режим отладки 
+DJANGO_SECRET = '***' # укажите секретный ключ django 
+
+ALLOWED_HOSTS = '' # ip-адрес сервера
+```
+Выполните команды:
 ```bash
+cd .\FoodGram\
 docker-compose up -d --build
 ```
 
@@ -44,12 +55,12 @@ docker-compose ps
 ```
 Назначение контейнеров:  
 
-| NAMES             |        DESCRIPTIONS         |
-|:------------------|:---------------------------:|
-| infra-_nginx_1    |   контейнер HTTP-сервера    |
-| infra-_db_1       |    контейнер базы данных    |
-| infra-_backend_1  | контейнер приложения Django |
-| infra-_frontend_1 | контейнер приложения React  |
+| NAMES               |        DESCRIPTIONS         |
+|:--------------------|:---------------------------:|
+| foodgram-nginx-1    |   контейнер HTTP-сервера    |
+| foodgram-db_1       |    контейнер базы данных    |
+| foodgram-backend_1  | контейнер приложения Django |
+
 
 ### Выполните миграции:
 ```bash
